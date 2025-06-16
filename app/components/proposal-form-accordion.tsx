@@ -274,12 +274,12 @@ export default function ProposalFormAccordion({
     )
   }
 
-  // Effect to open the first section when the component mounts
-  useEffect(() => {
-    if (sections.length > 0) {
-      setOpenSections([sections[0].id])
-    }
-  }, [])
+  // Effect to open the first section when the component mounts - DISABLED
+  // useEffect(() => {
+  //   if (sections.length > 0) {
+  //     setOpenSections([sections[0].id])
+  //   }
+  // }, [])
 
   // Calculate overall progress
   const overallProgress = () => {
@@ -303,50 +303,50 @@ export default function ProposalFormAccordion({
     }
   }
 
-  // Auto-open reimbursables when services section is opened
-  useEffect(() => {
-    if (openSections.includes("services")) {
-      setOpenSections((prev) => {
-        if (!prev.includes("reimbursables")) {
-          return [...prev, "reimbursables"]
-        }
-        return prev
-      })
-    }
-  }, [openSections])
+  // Auto-open reimbursables when services section is opened - DISABLED
+  // useEffect(() => {
+  //   if (openSections.includes("services")) {
+  //     setOpenSections((prev) => {
+  //       if (!prev.includes("reimbursables")) {
+  //         return [...prev, "reimbursables"]
+  //       }
+  //       return prev
+  //     })
+  //   }
+  // }, [openSections])
 
-  // Auto-open services when project information is in progress
-  useEffect(() => {
-    const projectValidation = validateSection("project")
-    if (projectValidation.isValid && !projectValidation.isComplete) {
-      setOpenSections((prev) => {
-        if (!prev.includes("services")) {
-          return [...prev, "services"]
-        }
-        return prev
-      })
-    }
-  }, [data.projectInfo])
+  // Auto-open services when project information is in progress - DISABLED
+  // useEffect(() => {
+  //   const projectValidation = validateSection("project")
+  //   if (projectValidation.isValid && !projectValidation.isComplete) {
+  //     setOpenSections((prev) => {
+  //       if (!prev.includes("services")) {
+  //         return [...prev, "services"]
+  //       }
+  //       return prev
+  //     })
+  //   }
+  // }, [data.projectInfo])
 
-  // Auto-open next section when current becomes valid
-  useEffect(() => {
-    sections.forEach((section, index) => {
-      const validation = validateSection(section.id)
-      if (validation.isValid && index < sections.length - 1) {
-        const nextSection = sections[index + 1]
-        if (!validateSection(nextSection.id).isComplete) {
-          setTimeout(() => {
-            setOpenSections((prev) => {
-              if (!prev.includes(nextSection.id)) {
-                return [...prev, nextSection.id]
-              }
-              return prev
-            })
-          }, 300)
-        }
-      }
-    })
-  }, [data, reimbursables, isReimbursablesNeeded])
+  // Auto-open next section when current becomes valid - DISABLED
+  // useEffect(() => {
+  //   sections.forEach((section, index) => {
+  //     const validation = validateSection(section.id)
+  //     if (validation.isValid && index < sections.length - 1) {
+  //       const nextSection = sections[index + 1]
+  //       if (!validateSection(nextSection.id).isComplete) {
+  //         setTimeout(() => {
+  //           setOpenSections((prev) => {
+  //             if (!prev.includes(nextSection.id)) {
+  //               return [...prev, nextSection.id]
+  //             }
+  //             return prev
+  //           })
+  //         }, 300)
+  //       }
+  //     }
+  //   })
+  // }, [data, reimbursables, isReimbursablesNeeded])
 
   // Auto-toggle reimbursables based on payment type
   useEffect(() => {
@@ -358,20 +358,20 @@ export default function ProposalFormAccordion({
     }
   }, [data.paymentType])
 
-  // Auto-open PDF generation when reimbursables become complete
-  useEffect(() => {
-    const reimbursablesValidation = validateSection("reimbursables")
-    if (reimbursablesValidation.isComplete) {
-      setTimeout(() => {
-        setOpenSections((prev) => {
-          if (!prev.includes("generate")) {
-            return [...prev, "generate"]
-          }
-          return prev
-        })
-      }, 300)
-    }
-  }, [isReimbursablesNeeded, reimbursables])
+  // Auto-open PDF generation when reimbursables become complete - DISABLED
+  // useEffect(() => {
+  //   const reimbursablesValidation = validateSection("reimbursables")
+  //   if (reimbursablesValidation.isComplete) {
+  //     setTimeout(() => {
+  //       setOpenSections((prev) => {
+  //         if (!prev.includes("generate")) {
+  //           return [...prev, "generate"]
+  //         }
+  //         return prev
+  //       })
+  //     }, 300)
+  //   }
+  // }, [isReimbursablesNeeded, reimbursables])
 
   const updateData = (field: string, value: any) => {
     onChange({ ...data, [field]: value })

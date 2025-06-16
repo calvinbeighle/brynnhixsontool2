@@ -9,6 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Download, Eye } from "lucide-react"
 import type { ProposalData, HourlyRates, ReimbursableData } from "../types/proposal"
 
+// Feature flags for development
+const USE_MOCK_PDF_PREVIEW = true
+const USE_LEGACY_PREVIEW = false
+
 interface PDFGeneratorProps {
   proposalData: ProposalData
   services: any[]
@@ -689,6 +693,32 @@ export default function PDFGenerator({ proposalData, services, reimbursables, is
     return basicServiceNames.slice(0, -1).join(", ") + ", and " + basicServiceNames[basicServiceNames.length - 1]
   }
 
+  // Mock PDF preview for development
+  const createMockPDFPreview = () => {
+    return (
+      <div className="w-full">
+        {/* Clean PDF Display - No controls */}
+        <div className="w-full border border-gray-200 rounded-lg overflow-hidden bg-white">
+          <embed
+            src="/pdfs/mock-proposal.pdf#toolbar=0&navpanes=0&scrollbar=0&zoom=FitH"
+            type="application/pdf"
+            width="100%"
+            height="500"
+            className="w-full"
+            style={{ border: 'none' }}
+          />
+        </div>
+        
+        {/* Fallback text below - always visible */}
+        <div className="mt-2 text-center">
+          <p className="text-xs text-gray-500">
+            PDF Preview • Set <code className="bg-gray-100 px-1 rounded text-xs">USE_MOCK_PDF_PREVIEW = false</code> to restore original preview
+          </p>
+        </div>
+      </div>
+    )
+  }
+
   // Create preview content that shows page breaks
   const createPreviewContent = () => {
     const selectedServices = services.filter((service) =>
@@ -1311,9 +1341,7 @@ export default function PDFGenerator({ proposalData, services, reimbursables, is
                 type="number"
                 value={hourlyRates.principal}
                 onChange={(e) => updateHourlyRates("principal", Number.parseInt(e.target.value) || 0)}
-                className={`border-slate-300 focus:border-emerald-500 focus:ring-emerald-500 font-light ${
-                  hourlyRates.principal > 0 ? "border-emerald-500 bg-emerald-50" : ""
-                }`}
+                className="border-slate-300 font-light"
               />
             </div>
             <div className="grid gap-2">
@@ -1325,9 +1353,7 @@ export default function PDFGenerator({ proposalData, services, reimbursables, is
                 type="number"
                 value={hourlyRates.srAssociate}
                 onChange={(e) => updateHourlyRates("srAssociate", Number.parseInt(e.target.value) || 0)}
-                className={`border-slate-300 focus:border-emerald-500 focus:ring-emerald-500 font-light ${
-                  hourlyRates.srAssociate > 0 ? "border-emerald-500 bg-emerald-50" : ""
-                }`}
+                className="border-slate-300 font-light"
               />
             </div>
             <div className="grid gap-2">
@@ -1339,9 +1365,7 @@ export default function PDFGenerator({ proposalData, services, reimbursables, is
                 type="number"
                 value={hourlyRates.srConsultant}
                 onChange={(e) => updateHourlyRates("srConsultant", Number.parseInt(e.target.value) || 0)}
-                className={`border-slate-300 focus:border-emerald-500 focus:ring-emerald-500 font-light ${
-                  hourlyRates.srConsultant > 0 ? "border-emerald-500 bg-emerald-50" : ""
-                }`}
+                className="border-slate-300 font-light"
               />
             </div>
             <div className="grid gap-2">
@@ -1353,9 +1377,7 @@ export default function PDFGenerator({ proposalData, services, reimbursables, is
                 type="number"
                 value={hourlyRates.consultant}
                 onChange={(e) => updateHourlyRates("consultant", Number.parseInt(e.target.value) || 0)}
-                className={`border-slate-300 focus:border-emerald-500 focus:ring-emerald-500 font-light ${
-                  hourlyRates.consultant > 0 ? "border-emerald-500 bg-emerald-50" : ""
-                }`}
+                className="border-slate-300 font-light"
               />
             </div>
             <div className="grid gap-2">
@@ -1367,9 +1389,7 @@ export default function PDFGenerator({ proposalData, services, reimbursables, is
                 type="number"
                 value={hourlyRates.fieldTechnician}
                 onChange={(e) => updateHourlyRates("fieldTechnician", Number.parseInt(e.target.value) || 0)}
-                className={`border-slate-300 focus:border-emerald-500 focus:ring-emerald-500 font-light ${
-                  hourlyRates.fieldTechnician > 0 ? "border-emerald-500 bg-emerald-50" : ""
-                }`}
+                className="border-slate-300 font-light"
               />
             </div>
             <div className="grid gap-2">
@@ -1381,9 +1401,7 @@ export default function PDFGenerator({ proposalData, services, reimbursables, is
                 type="number"
                 value={hourlyRates.administrative}
                 onChange={(e) => updateHourlyRates("administrative", Number.parseInt(e.target.value) || 0)}
-                className={`border-slate-300 focus:border-emerald-500 focus:ring-emerald-500 font-light ${
-                  hourlyRates.administrative > 0 ? "border-emerald-500 bg-emerald-50" : ""
-                }`}
+                className="border-slate-300 font-light"
               />
             </div>
           </div>
@@ -1402,9 +1420,7 @@ export default function PDFGenerator({ proposalData, services, reimbursables, is
             </Label>
             <Select value={riskAllocationAmount} onValueChange={setRiskAllocationAmount}>
               <SelectTrigger
-                className={`border-slate-300 focus:border-emerald-500 focus:ring-emerald-500 font-light ${
-                  riskAllocationAmount ? "border-emerald-500 bg-emerald-50" : ""
-                }`}
+                className="border-slate-300 font-light"
               >
                 <SelectValue placeholder="Select liability limit" />
               </SelectTrigger>
@@ -1431,9 +1447,9 @@ export default function PDFGenerator({ proposalData, services, reimbursables, is
             Proposal Preview (Multi-Page)
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="bg-white border border-slate-200 rounded-lg p-8 max-h-96 overflow-y-auto shadow-inner">
-            {createPreviewContent()}
+        <CardContent className="p-0">
+          <div className="bg-white border border-slate-200 rounded-lg overflow-hidden max-h-96 overflow-y-auto shadow-inner">
+            {USE_MOCK_PDF_PREVIEW ? createMockPDFPreview() : createPreviewContent()}
           </div>
           <div className="mt-4">
             <Button
